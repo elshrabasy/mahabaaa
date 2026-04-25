@@ -1,0 +1,4 @@
+import { motion } from 'framer-motion';
+import type { LucideIcon } from 'lucide-react';
+interface Props{ title:string; value:string; unit?:string; icon:LucideIcon; accent?:string; }
+export function KpiCard({ title,value,unit,icon:Icon,accent='bg-mapco-50 text-mapco-700' }:Props){ return <motion.div initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} className="card p-5"><div className="mb-4 flex items-start justify-between"><div><p className="text-sm text-slate-500">{title}</p><div className="mt-2 flex items-end gap-2"><h3 className="text-3xl font-bold text-slate-900">{value}</h3>{unit ? <span className="pb-1 text-sm text-slate-500">{unit}</span> : null}</div></div><div className={`rounded-2xl p-3 ${accent}`}><Icon size={20} /></div></div><div className="h-2 rounded-full bg-slate-100"><div className="h-2 rounded-full bg-mapco-500" style={{width:'62%'}} /></div></motion.div>; }

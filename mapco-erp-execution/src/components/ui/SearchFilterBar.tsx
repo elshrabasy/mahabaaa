@@ -1,0 +1,2 @@
+import { Search } from 'lucide-react';
+export function SearchFilterBar({value,onChange,placeholder='بحث سريع'}:{value:string;onChange:(v:string)=>void;placeholder?:string}){ return <div className="relative max-w-md"><Search className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={18}/><input className="input pr-11" value={value} onChange={(e)=>onChange(e.target.value)} placeholder={placeholder}/></div>; }

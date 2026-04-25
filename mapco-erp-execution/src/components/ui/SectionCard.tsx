@@ -1,0 +1,2 @@
+import type { ReactNode } from 'react';
+export function SectionCard({title,subtitle,children}:{title:string;subtitle?:string;children:ReactNode}){ return <section className="card p-5"><div className="mb-4"><h4 className="text-lg font-bold text-slate-900">{title}</h4>{subtitle ? <p className="mt-1 text-sm text-slate-500">{subtitle}</p> : null}</div>{children}</section>; }

@@ -1,0 +1,78 @@
+{
+  "name": "mahabat-alfan-erp",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Mahabat Alfan ERP - Packaging, printing and die-cutting management system",
+  "main": "dist-electron/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc -p tsconfig.electron.json",
+    "build:ci": "vite build && tsc -p tsconfig.electron.json",
+    "preview": "vite preview",
+    "electron:dev": "concurrently -k \"vite\" \"tsc -p tsconfig.electron.json --watch\" \"wait-on tcp:5173 dist-electron/main.js && electron .\"",
+    "dist": "npm run build && electron-builder --win nsis --x64 --publish never",
+    "clean:data": "node -e \"const fs=require('fs'), path=require('path'), os=require('os'); const p=path.join(os.homedir(),'AppData/Roaming/mahabat-alfan-erp/data'); fs.rmSync(p,{recursive:true,force:true}); console.log('Realm data removed')\""
+  },
+  "dependencies": {
+    "framer-motion": "^12.0.0",
+    "lucide-react": "^0.525.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.0",
+    "recharts": "^2.15.0",
+    "realm": "^20.2.0",
+    "zod": "^3.24.1",
+    "exceljs": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^5.0.0",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.2",
+    "electron": "^37.0.0",
+    "electron-builder": "^26.8.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.0",
+    "vite": "^7.0.0",
+    "wait-on": "^8.0.3"
+  },
+  "build": {
+    "appId": "com.mahabat.alfan.erp",
+    "productName": "Mahabat Alfan ERP",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "artifactName": "Mahabat-Alfan-ERP-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Mahabat Alfan ERP"
+    }
+  },
+  "author": "Mahabat Alfan"
+}

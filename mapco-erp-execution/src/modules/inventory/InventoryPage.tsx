@@ -1,0 +1,17 @@
+import { useMemo, useState } from 'react';
+import { api } from '../../lib/api';
+import { useAppState } from '../../app/providers/AppProvider';
+import { PageHeader } from '../../components/ui/PageHeader';
+import { ActionButton } from '../../components/ui/ActionButton';
+import { DataTable } from '../../components/tables/DataTable';
+import { Modal } from '../../components/ui/Modal';
+import { InventoryForm } from '../../components/forms/InventoryForm';
+import { InventoryMovementForm } from '../../components/forms/InventoryMovementForm';
+import { SearchFilterBar } from '../../components/ui/SearchFilterBar';
+import { formatCurrency } from '../../lib/helpers';
+import type { InventoryItem } from '../../types/entities';
+export function InventoryPage(){ const { inventory, inventoryMovements, refreshAll, canEdit } = useAppState(); const [open,setOpen]=useState(false); const [movementOpen,setMovementOpen]=useState(false); const [editing,setEditing]=useState<InventoryItem|null>(null); const [query,setQuery]=useState(''); const filtered=useMemo(()=>inventory.filter(item=>JSON.stringify(item).toLowerCase().includes(query.toLowerCase())),[inventory,query]); const total=useMemo(()=>inventory.reduce((s,i)=>s+i.totalValue,0),[inventory]);
+return <div className="space-y-6"><div className="page-shell"><PageHeader title="إدارة المخزون" subtitle={`إجمالي قيمة المخزون: ${formatCurrency(total)} SAR`} action={<div className="flex gap-2"><ActionButton variant="secondary" onClick={()=>setMovementOpen(true)}>حركة مخزون</ActionButton><ActionButton onClick={()=>{setEditing(null); setOpen(true);}}>إضافة صنف مخزون</ActionButton></div>} /><div className="mb-4"><SearchFilterBar value={query} onChange={setQuery} placeholder="بحث بالكود، الاسم، المورد، الفئة" /></div><DataTable rows={filtered} canEdit={canEdit} canDelete={canEdit} columns={[{key:'itemCode',title:'الكود'},{key:'itemName',title:'الصنف'},{key:'category',title:'الفئة'},{key:'quantity',title:'الكمية',render:(row)=>formatCurrency(row.quantity)},{key:'unitCost',title:'تكلفة الوحدة',render:(row)=>`${formatCurrency(row.unitCost)} SAR`},{key:'totalValue',title:'القيمة',render:(row)=>`${formatCurrency(row.totalValue)} SAR`},{key:'reorderLevel',title:'حد الطلب',render:(row)=>formatCurrency(row.reorderLevel)},{key:'supplier',title:'المورد'}]} onEdit={(row)=>{setEditing(row); setOpen(true);}} onDelete={(row)=>{ void api.deleteInventoryItem(row.id).then(refreshAll); }} /></div>
+<div className="page-shell"><PageHeader title="حركات المخزون" subtitle="إضافة / صرف / تسوية الرصيد" /><DataTable rows={inventoryMovements} columns={[{key:'date',title:'التاريخ'},{key:'itemName',title:'الصنف'},{key:'type',title:'نوع الحركة',render:(row)=>row.type==='in'?'إضافة':row.type==='out'?'صرف':'تسوية'},{key:'quantity',title:'الكمية',render:(row)=>formatCurrency(row.quantity)},{key:'notes',title:'ملاحظات'}]} /></div>
+<Modal open={open} title={editing?'تعديل صنف المخزون':'إضافة صنف مخزون'} onClose={()=>setOpen(false)}><InventoryForm initial={editing} onSubmit={async(payload)=>{ if(editing) await api.updateInventoryItem(editing.id,payload); else await api.createInventoryItem(payload); setOpen(false); await refreshAll(); }} /></Modal>
+<Modal open={movementOpen} title="تسجيل حركة مخزون" onClose={()=>setMovementOpen(false)}><InventoryMovementForm items={inventory} onSubmit={async(payload)=>{ await api.createInventoryMovement(payload); setMovementOpen(false); await refreshAll(); }} /></Modal></div>; }

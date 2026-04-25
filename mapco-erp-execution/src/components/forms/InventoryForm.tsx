@@ -1,0 +1,10 @@
+import { useEffect, useState } from 'react'; import type { InventoryItem } from '../../types/entities'; import { ActionButton } from '../ui/ActionButton';
+type EditableInventory=Omit<InventoryItem,'id'|'totalValue'>;
+const initialState:EditableInventory={itemCode:'',itemName:'',category:'',quantity:0,unitCost:0,reorderLevel:0,supplier:''};
+export function InventoryForm({initial,onSubmit}:{initial?:InventoryItem|null;onSubmit:(payload:EditableInventory)=>Promise<void>}){ const [form,setForm]=useState<EditableInventory>(initial ?? initialState); useEffect(()=>{ setForm(initial ? {itemCode:initial.itemCode,itemName:initial.itemName,category:initial.category,quantity:initial.quantity,unitCost:initial.unitCost,reorderLevel:initial.reorderLevel,supplier:initial.supplier}:initialState); },[initial]);
+return <form className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={(e)=>{e.preventDefault(); void onSubmit(form);}}>
+{[['itemCode','كود الصنف'],['itemName','اسم الصنف'],['category','الفئة'],['supplier','المورد']].map(([key,label])=><div key={key}><label className="label">{label}</label><input className="input" value={String((form as Record<string,unknown>)[key])} onChange={(e)=>setForm((prev)=>({...prev,[key]:e.target.value}))} /></div>)}
+<div><label className="label">الكمية</label><input className="input" type="number" value={form.quantity} onChange={(e)=>setForm((prev)=>({...prev,quantity:Number(e.target.value)}))} /></div>
+<div><label className="label">تكلفة الوحدة</label><input className="input" type="number" value={form.unitCost} onChange={(e)=>setForm((prev)=>({...prev,unitCost:Number(e.target.value)}))} /></div>
+<div><label className="label">حد إعادة الطلب</label><input className="input" type="number" value={form.reorderLevel} onChange={(e)=>setForm((prev)=>({...prev,reorderLevel:Number(e.target.value)}))} /></div>
+<div className="md:col-span-2 flex justify-end"><ActionButton type="submit">حفظ الصنف</ActionButton></div></form>; }

@@ -1,0 +1,2 @@
+import type { ReactNode } from 'react';
+export function ActionButton({children,onClick,variant='primary',type='button'}:{children:ReactNode;onClick?:()=>void;variant?:'primary'|'secondary'|'danger';type?:'button'|'submit';}){ const classes={primary:'bg-mapco-900 text-white hover:bg-mapco-800',secondary:'bg-slate-100 text-slate-800 hover:bg-slate-200',danger:'bg-rose-600 text-white hover:bg-rose-700'}; return <button type={type} onClick={onClick} className={`rounded-2xl px-4 py-3 text-sm font-semibold ${classes[variant]}`}>{children}</button>; }
